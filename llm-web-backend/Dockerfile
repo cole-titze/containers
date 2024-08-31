@@ -27,4 +27,4 @@ USER llmuser
 COPY --from=build-env --chown=llmuser:llmgroup /llm/llama.cpp/llama-server .
 
 EXPOSE 8083
-ENTRYPOINT ["./llama-server", "--model", "./models/llama3-Q4_K_M.gguf", "--port", "8083", "--host", "0.0.0.0"]
+ENTRYPOINT ["./llama-server", "--model", "./models/model.gguf", "--port", "8083", "--host", "0.0.0.0"]
