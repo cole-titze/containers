@@ -14,4 +14,4 @@ RUN echo "/export *(rw,no_root_squash,fsid=0,sync)" > /etc/exports
 # Expose NFS ports
 EXPOSE 111/tcp 111/udp 2049/tcp 2049/udp
 
-ENTRYPOINT ["/bin/sh", "-c", "rpcbind && unfsd -e /etc/exports -n 2049"]
+CMD ["sh", "-c", "rpcbind && unfsd -e /etc/exports -n 2049"]
