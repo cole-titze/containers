@@ -1,4 +1,3 @@
-# Use Alpine as the base image
 FROM alpine:latest
 
 # Install NFS user-space server

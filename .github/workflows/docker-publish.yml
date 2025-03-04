@@ -21,13 +21,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # Ensures we have at least the last commit for comparison
 
       - name: Determine changed files
         id: changes
         run: |
-          echo "magic_mirror=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^magic-mirror/' | wc -l)" >> $GITHUB_ENV
-          echo "llm=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^llm-web-backend/' | wc -l)" >> $GITHUB_ENV
-          echo "nfs=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^nfs/' | wc -l)" >> $GITHUB_ENV
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            echo "magic_mirror=$(git diff --name-only HEAD~1 HEAD | grep '^magic-mirror/' | wc -l)" >> $GITHUB_ENV
+            echo "llm=$(git diff --name-only HEAD~1 HEAD | grep '^llm-web-backend/' | wc -l)" >> $GITHUB_ENV
+            echo "nfs=$(git diff --name-only HEAD~1 HEAD | grep '^nfs/' | wc -l)" >> $GITHUB_ENV
+          else
+            echo "magic_mirror=1" >> $GITHUB_ENV
+            echo "llm=1" >> $GITHUB_ENV
+            echo "nfs=1" >> $GITHUB_ENV
+          fi
 
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
