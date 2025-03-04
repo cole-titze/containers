@@ -57,8 +57,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/magic-mirror:latest
           platforms: linux/arm64/v8
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Build and push Docker image for llm
         if: env.llm != '0'
@@ -69,8 +67,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/llm-web-backend:latest
           platforms: linux/arm64/v8
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Build and push Docker image for nfs
         if: env.nfs != '0'
@@ -81,5 +77,3 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/nfs:latest
           platforms: linux/arm64/v8
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
