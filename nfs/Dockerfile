@@ -1,17 +1,20 @@
-FROM alpine:latest
+# Use a lightweight base image for Raspberry Pi
+FROM ubuntu:latest
 
-WORKDIR /nfs
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    nfs-kernel-server \
+    rpcbind \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install NFS user-space server and RPC tools
-RUN apk add --no-cache unfs3 rpcbind
+# Create the NFS share directory
+RUN mkdir -p /nfs_share && chmod 777 /nfs_share
 
-# Create an NFS export directory
-RUN mkdir -p /export && chmod 777 /export
-
-# Add an exports file
-RUN echo "/export *(rw,no_root_squash,fsid=0,sync)" > /etc/exports
+# Define the NFS exports configuration
+RUN echo "/nfs_share *(rw,sync,no_subtree_check,no_root_squash)" > /etc/exports
 
 # Expose NFS ports
-EXPOSE 111/tcp 111/udp 2049/tcp 2049/udp
+EXPOSE 2049 111/udp 111/tcp
 
-CMD ["sh", "-c", "rpcbind && unfsd -e /etc/exports -n 2049"]
+# Run NFS server in the foreground
+CMD ["bash", "-c", "rpcbind && exportfs -r && service nfs-kernel-server start && tail -f /dev/null"]
