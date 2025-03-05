@@ -67,13 +67,3 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/llm-web-backend:latest
           platforms: linux/arm64/v8
-
-      - name: Build and push Docker image for nfs
-        if: env.nfs != '0'
-        uses: docker/build-push-action@v4
-        with:
-          context: ./nfs
-          file: ./nfs/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/nfs:latest
-          platforms: linux/arm64/v8
