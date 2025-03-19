@@ -31,10 +31,12 @@ jobs:
             echo "magic_mirror=$(git diff --name-only HEAD~1 HEAD | grep '^magic-mirror/' | wc -l)" >> $GITHUB_ENV
             echo "llm=$(git diff --name-only HEAD~1 HEAD | grep '^llm-web-backend/' | wc -l)" >> $GITHUB_ENV
             echo "nfs=$(git diff --name-only HEAD~1 HEAD | grep '^nfs/' | wc -l)" >> $GITHUB_ENV
+            echo "monero=$(git diff --name-only HEAD~1 HEAD | grep '^monero-miner/' | wc -l)" >> $GITHUB_ENV
           else
             echo "magic_mirror=1" >> $GITHUB_ENV
             echo "llm=1" >> $GITHUB_ENV
             echo "nfs=1" >> $GITHUB_ENV
+            echo "monero=1" >> $GITHUB_ENV
           fi
 
       - name: Log into registry ${{ env.REGISTRY }}
@@ -66,4 +68,14 @@ jobs:
           file: ./llm-web-backend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/llm-web-backend:latest
+          platforms: linux/arm64/v8
+
+      - name: Build and push Docker image for llm
+        if: env.monero != '0'
+        uses: docker/build-push-action@v4
+        with:
+          context: ./monero-miner
+          file: ./monero-miner/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/monero-miner:latest
           platforms: linux/arm64/v8
