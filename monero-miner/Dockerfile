@@ -18,7 +18,7 @@ RUN mkdir build && cd build && \
 # Copy compiled binary to root
 RUN cp build/xmrig /usr/local/bin/
 
-# Set environment variables (with defaults)
+# Set default environment variables
 ENV WALLET_ADDRESS=""
 ENV MINING_POOL="pool.supportxmr.com:3333"
 

@@ -70,7 +70,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/llm-web-backend:latest
           platforms: linux/arm64/v8
 
-      - name: Build and push Docker image for llm
+      - name: Build and push Docker image for monero-miner arm v8
         if: env.monero != '0'
         uses: docker/build-push-action@v4
         with:
@@ -78,4 +78,4 @@ jobs:
           file: ./monero-miner/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/monero-miner:latest
-          platforms: linux/arm64/v8
+          platforms: linux/amd64,linux/arm64/v8
