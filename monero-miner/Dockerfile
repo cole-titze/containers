@@ -22,5 +22,5 @@ RUN cp build/xmrig /usr/local/bin/
 ENV WALLET_ADDRESS=""
 ENV MINING_POOL="pool.supportxmr.com:3333"
 
-# Start mining using environment variables
+# Start mining
 CMD ["sh", "-c", "xmrig --donate-level 1 -o $MINING_POOL -u $WALLET_ADDRESS -p x -k --cpu-priority 5"]

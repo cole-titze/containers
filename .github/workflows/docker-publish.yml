@@ -70,6 +70,11 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/llm-web-backend:latest
           platforms: linux/arm64/v8
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container  # Enables multi-platform builds
+
       - name: Build and push Docker image for monero-miner arm v8
         if: env.monero != '0'
         uses: docker/build-push-action@v4
