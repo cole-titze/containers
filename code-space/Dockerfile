@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -20,13 +20,10 @@ WORKDIR /home/coder
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # Create project folder
-RUN mkdir /home/coder/project
+RUN mkdir /code-space
 
 # Expose port
 EXPOSE 8090
 
-# Set environment variables
-ENV PASSWORD=changeme
-
 # Start code-server on container start
-CMD ["code-server", "--bind-addr", "0.0.0.0:8090", "/home/coder/project"]
+CMD ["code-server", "--bind-addr", "0.0.0.0:8090", "/code-space"]
