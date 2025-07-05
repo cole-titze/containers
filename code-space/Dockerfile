@@ -13,14 +13,11 @@ RUN useradd -m coder \
     && echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER coder
-WORKDIR /home/coder
+WORKDIR /code-space
 
 # Install code-server (latest stable)
 # https://github.com/coder/code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
-
-# Create project folder
-RUN mkdir /code-space
 
 # Expose port
 EXPOSE 8090
