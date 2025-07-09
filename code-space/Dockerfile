@@ -2,25 +2,44 @@ FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update and install packages
-RUN apt-get update && apt-get install -y curl && apt-get clean
+# Install dependencies
+RUN apt-get update && apt-get install -y curl jq && apt-get clean
 
-# Create user for code-server
-RUN useradd -m coder \
-    && echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# Create non-root user with bash shell
+RUN useradd -m -s /bin/bash coder && \
+    echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Switch to bash as default shell for coder user
-RUN sed -i 's|^coder:.*:/bin/sh$|coder:x:1000:1000::/home/coder:/bin/bash|' /etc/passwd
-
-# Install code-server (latest stable)
-# https://github.com/coder/code-server
+# Install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
+# Prepare code-server directories as root
+RUN mkdir -p /home/coder/.local/share/code-server/User /code-space && \
+    chown -R coder:coder /home/coder /code-space
+
+# Copy VS Code settings
+COPY --chown=coder:coder settings.json /home/coder/.local/share/code-server/User/settings.json
+
+# Switch to coder user
 USER coder
+ENV HOME=/home/coder
 WORKDIR /code-space
 
-# Expose port
+# Create temporary directory for Copilot download
+RUN mkdir -p /tmp/copilot
+
+# Query GitHub Copilot latest version number
+RUN VERSION=$(curl -s 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' \
+  -H 'accept: application/json;api-version=7.2-preview.1;excludeUrls=true' \
+  -H 'Content-Type: application/json' \
+  --data '{"filters":[{"criteria":[{"filterType":7,"value":"github.copilot"}]}],"flags":2151}' \
+  | jq -r '.results[0].extensions[0].versions[0].version') \
+  && echo "[i] Version ${VERSION}" \
+  && curl \
+        -o "copilot-${VERSION}.vsix" \
+        --compressed \
+        "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot/${VERSION}/vspackage" \
+  && code-server --install-extension "copilot-${VERSION}.vsix"
+
 EXPOSE 8090
 
-# Start code-server on container start
 CMD ["code-server", "--bind-addr", "0.0.0.0:8090", "/code-space"]
