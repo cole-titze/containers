@@ -3,7 +3,7 @@ FROM ubuntu:latest
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
-RUN apt-get update && apt-get install -y curl jq && apt-get clean
+RUN apt-get update && apt-get install -y curl jq git && apt-get clean
 
 # Create non-root user with bash shell
 RUN useradd -m -s /bin/bash coder && \
