@@ -24,6 +24,10 @@ USER coder
 ENV HOME=/home/coder
 WORKDIR /code-space
 
+# Setup ssh folder permissions
+RUN mkdir -p /home/coder/.ssh && \
+    chmod 700 /home/coder/.ssh
+
 # Create temporary directory for Copilot download
 RUN mkdir -p /tmp/copilot
 
