@@ -1,4 +1,4 @@
-FROM arm64v8/alpine:latest as build-env
+FROM arm64v8/alpine:latest AS build-env
 
 RUN apk add --no-cache git
 RUN apk add --update nodejs npm
