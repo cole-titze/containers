@@ -4,8 +4,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
 RUN apt-get update && \
-    apt-get install -y curl jq git dotnet-sdk-9.0 && \
+    apt-get install -y curl jq git && \
     apt-get clean
+
+# Get dotnet
+RUN curl -L https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && \
+    chmod +x dotnet-install.sh && \
+    ./dotnet-install.sh --version latest && \
+    rm dotnet-install.sh
 
 # Create non-root user with bash shell
 RUN useradd -m -s /bin/bash coder && \
