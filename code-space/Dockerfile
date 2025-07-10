@@ -20,12 +20,17 @@ RUN useradd -m -s /bin/bash coder && \
 # Install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
+# Prepare code-server directories as root
+RUN mkdir -p /home/coder/.local/share/code-server/User /code-space && \
+    chown -R coder:coder /home/coder /code-space
+
 # Copy VS Code settings
 COPY --chown=coder:coder settings.json /home/coder/.local/share/code-server/User/settings.json
 
 # Switch to coder user
 USER coder
 ENV HOME=/home/coder
+WORKDIR /home/coder
 
 # Setup ssh folder permissions
 RUN mkdir -p /home/coder/.ssh && \
@@ -49,4 +54,4 @@ RUN VERSION=$(curl -s 'https://marketplace.visualstudio.com/_apis/public/gallery
 
 EXPOSE 8090
 
-CMD ["code-server", "--bind-addr", "0.0.0.0:8090", "/code-space"]
+CMD ["code-server", "--bind-addr", "0.0.0.0:8090", "~/home/coder"]
