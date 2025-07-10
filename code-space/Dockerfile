@@ -13,16 +13,16 @@ RUN curl -L https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && \
     ./dotnet-install.sh --version latest && \
     rm dotnet-install.sh
 
-# Create non-root user with bash shell
-RUN useradd -m -s /bin/bash coder && \
-    echo "coder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# Create non-root user 'coder' with specific UID (e.g., 1001) and bash shell
+RUN useradd -m -u 1001 -s /bin/bash coder
 
 # Install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # Prepare code-server directories as root
-RUN mkdir -p /home/coder/.local/share/code-server/User /code-space && \
-    chown -R coder:coder /home/coder /code-space
+RUN chown -R coder:coder /home/coder
+
+RUN echo "coder uid: $(id -u coder)"
 
 # Copy VS Code settings
 COPY --chown=coder:coder settings.json /home/coder/.local/share/code-server/User/settings.json
@@ -54,4 +54,4 @@ RUN VERSION=$(curl -s 'https://marketplace.visualstudio.com/_apis/public/gallery
 
 EXPOSE 8090
 
-CMD ["code-server", "--bind-addr", "0.0.0.0:8090", "~/home/coder"]
+CMD ["code-server", "--bind-addr", "0.0.0.0:8090"]
