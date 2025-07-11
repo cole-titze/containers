@@ -39,6 +39,8 @@ ENV PATH="${HOME}/.dotnet:${PATH}"
 RUN mkdir -p /home/coder/source/.ssh && \
     chmod 700 /home/coder/source/.ssh
 
+COPY --chown=coder:coder README.md /home/coder/source/README.md
+
 # Query GitHub Copilot latest version number
 RUN VERSION=$(curl -s 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' \
   -H 'accept: application/json;api-version=7.2-preview.1;excludeUrls=true' \
