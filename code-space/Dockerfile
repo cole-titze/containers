@@ -4,14 +4,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
 RUN apt-get update && \
-    apt-get install -y curl jq git && \
+    apt-get install -y curl jq libicu74 git && \
     apt-get clean
-
-# Get dotnet
-RUN curl -L https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && \
-    chmod +x dotnet-install.sh && \
-    ./dotnet-install.sh --version latest && \
-    rm dotnet-install.sh
 
 # Create non-root user 'coder' with specific UID (e.g., 1001) and bash shell
 RUN useradd -m -u 1001 -s /bin/bash coder
@@ -32,6 +26,14 @@ COPY --chown=coder:coder settings.json /home/coder/.local/share/code-server/User
 USER coder
 ENV HOME=/home/coder
 WORKDIR /home/coder
+
+# Get dotnet
+RUN curl -L https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && \
+    chmod +x dotnet-install.sh && \
+    ./dotnet-install.sh --channel current && \
+    rm dotnet-install.sh
+
+ENV PATH="${HOME}/.dotnet:${PATH}"
 
 # Setup ssh folder permissions
 RUN mkdir -p /home/coder/source/.ssh && \
