@@ -52,4 +52,4 @@ RUN VERSION=$(curl -s 'https://marketplace.visualstudio.com/_apis/public/gallery
 
 EXPOSE 8090
 
-CMD ["code-server", "--bind-addr", "0.0.0.0:8090"]
+CMD ["code-server", "--bind-addr", "0.0.0.0:8090", "/home/coder/source"]
