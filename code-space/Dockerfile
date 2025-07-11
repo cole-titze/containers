@@ -15,12 +15,13 @@ RUN curl -L https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && \
 
 # Create non-root user 'coder' with specific UID (e.g., 1001) and bash shell
 RUN useradd -m -u 1001 -s /bin/bash coder
+RUN mkdir /home/coder/source
 
 # Install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # Prepare code-server directories as root
-RUN chown -R coder:coder /home/coder
+RUN chown -R coder:coder /home/coder/source 
 
 RUN echo "coder uid: $(id -u coder)"
 
@@ -33,11 +34,8 @@ ENV HOME=/home/coder
 WORKDIR /home/coder
 
 # Setup ssh folder permissions
-RUN mkdir -p /home/coder/.ssh && \
-    chmod 700 /home/coder/.ssh
-
-# Create temporary directory for Copilot download
-RUN mkdir -p /tmp/copilot
+RUN mkdir -p /home/coder/source/.ssh && \
+    chmod 700 /home/coder/source/.ssh
 
 # Query GitHub Copilot latest version number
 RUN VERSION=$(curl -s 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' \
