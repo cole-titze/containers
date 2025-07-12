@@ -30,7 +30,7 @@ WORKDIR /home/coder
 # Get dotnet
 RUN curl -L https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && \
     chmod +x dotnet-install.sh && \
-    ./dotnet-install.sh --channel current && \
+    ./dotnet-install.sh --channel STS && \
     rm dotnet-install.sh
 
 ENV PATH="${HOME}/.dotnet:${PATH}"
