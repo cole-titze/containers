@@ -1,7 +1,10 @@
 {
     "workbench.colorTheme": "Default Dark Modern",
+    "workbench.iconTheme": "vs-seti",
+    "workbench.startupEditor": "none",
     "editor.fontSize": 14,
-    "editor.fontFamily": "'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
+    "editor.fontFamily": "'SF Mono', 'JetBrains Mono NL', 'Roboto Mono', 'Consolas', 'Courier New', monospace",
+    "editor.fontLigatures": false,
     "editor.lineNumbers": "on",
     "editor.wordWrap": "on",
     "editor.minimap.enabled": true,
@@ -9,14 +12,12 @@
     "editor.insertSpaces": true,
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
-    "files.autoSave": "afterDelay",
-    "files.autoSaveDelay": 1000,
-    "terminal.integrated.fontSize": 13,
-    "workbench.iconTheme": "vs-seti",
-    "explorer.confirmDelete": false,
-    "explorer.confirmDragAndDrop": false,
-    "git.autofetch": true,
+    "files.autoSave": "off",
+    "files.trimTrailingWhitespace": true,
+    "terminal.integrated.fontSize": 14,
+    "explorer.confirmDelete": true,
+    "explorer.confirmDragAndDrop": true,
+    "git.autofetch": false,
     "git.confirmSync": false,
-    "extensions.autoUpdate": true,
-    "workbench.startupEditor": "welcomePage"
+    "extensions.autoUpdate": true
 }
