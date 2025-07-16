@@ -45,18 +45,8 @@ RUN mkdir -p /home/coder/source/.ssh && \
 
 COPY --chown=coder:coder README.md /home/coder/source/README.md
 
-# Query GitHub Copilot latest version number
-RUN VERSION=$(curl -s 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' \
-    -H 'accept: application/json;api-version=7.2-preview.1;excludeUrls=true' \
-    -H 'Content-Type: application/json' \
-    --data '{"filters":[{"criteria":[{"filterType":7,"value":"github.copilot"}]}],"flags":2151}' \
-    | jq -r '.results[0].extensions[0].versions[0].version') \
-    && echo "[i] Version ${VERSION}" \
-    && curl \
-    -o "copilot-${VERSION}.vsix" \
-    --compressed \
-    "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot/${VERSION}/vspackage" \
-    && code-server --install-extension "copilot-${VERSION}.vsix"
+# Install code-server extension 'continue.continue' as coder user
+RUN code-server --install-extension continue.continue --extensions-dir /home/coder/.local/share/code-server/extensions
 
 EXPOSE 8090
 
