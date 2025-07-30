@@ -1,0 +1,90 @@
+[
+    // Close editor tab
+    {
+        "key": "cmd+e",
+        "command": "workbench.action.closeActiveEditor",
+        "when": "isMac"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "workbench.action.closeActiveEditor",
+        "when": "!isMac"
+    },
+    // Close all tabs in current group
+    {
+        "key": "cmd+shift+e",
+        "command": "workbench.action.closeEditorsInGroup",
+        "when": "isMac"
+    },
+    {
+        "key": "ctrl+shift+e",
+        "command": "workbench.action.closeEditorsInGroup",
+        "when": "!isMac"
+    },
+    // Create new file
+    {
+        "key": "cmd+n",
+        "command": "workbench.action.files.newUntitledFile",
+        "when": "isMac"
+    },
+    {
+        "key": "ctrl+n",
+        "command": "workbench.action.files.newUntitledFile",
+        "when": "!isMac"
+    },
+    // Reopen last closed editor
+    {
+        "key": "cmd+shift+t",
+        "command": "workbench.action.reopenClosedEditor",
+        "when": "isMac"
+    },
+    {
+        "key": "ctrl+shift+t",
+        "command": "workbench.action.reopenClosedEditor",
+        "when": "!isMac"
+    },
+    // Format document
+    {
+        "key": "cmd+alt+f",
+        "command": "editor.action.formatDocument",
+        "when": "isMac"
+    },
+    {
+        "key": "ctrl+alt+f",
+        "command": "editor.action.formatDocument",
+        "when": "!isMac"
+    },
+    // Comment line
+    {
+        "key": "cmd+/",
+        "command": "editor.action.commentLine",
+        "when": "isMac"
+    },
+    {
+        "key": "ctrl+/",
+        "command": "editor.action.commentLine",
+        "when": "!isMac"
+    },
+    // Unbind default Cmd+W / Ctrl+W since browsers grab this
+    {
+        "key": "cmd+w",
+        "command": "-workbench.action.closeActiveEditor",
+        "when": "isMac"
+    },
+    {
+        "key": "ctrl+w",
+        "command": "-workbench.action.closeActiveEditor",
+        "when": "!isMac"
+    },
+    // Unbind quitting since browsers grab this
+    {
+        "key": "cmd+q",
+        "command": "-workbench.action.quit",
+        "when": "isMac"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "-workbench.action.quit",
+        "when": "!isMac"
+    }
+]

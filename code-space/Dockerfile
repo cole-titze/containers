@@ -21,6 +21,7 @@ RUN echo "coder uid: $(id -u coder)"
 
 # Copy VS Code settings
 COPY --chown=coder:coder settings.json /home/coder/.local/share/code-server/User/settings.json
+COPY --chown=coder:coder keybindings.json /home/coder/.local/share/code-server/User/keybindings.json
 
 # Switch to coder user
 USER coder
