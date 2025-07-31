@@ -48,6 +48,7 @@ COPY --chown=coder:coder README.md /home/coder/source/README.md
 
 # Install code-server extension 'continue.continue' as coder user
 RUN code-server --install-extension continue.continue --extensions-dir /home/coder/.local/share/code-server/extensions
+COPY --chown=coder:coder config.yml /home/coder/.continue/config.yml
 
 EXPOSE 8090
 
