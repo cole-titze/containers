@@ -32,12 +32,14 @@ jobs:
             echo "llm=$(git diff --name-only HEAD~1 HEAD | grep '^llm-web-backend/' | wc -l)" >> $GITHUB_ENV
             echo "nfs=$(git diff --name-only HEAD~1 HEAD | grep '^nfs/' | wc -l)" >> $GITHUB_ENV
             echo "monero=$(git diff --name-only HEAD~1 HEAD | grep '^monero-miner/' | wc -l)" >> $GITHUB_ENV
+            echo "qrl=$(git diff --name-only HEAD~1 HEAD | grep '^qrl-miner/' | wc -l)" >> $GITHUB_ENV
             echo "codespace=$(git diff --name-only HEAD~1 HEAD | grep '^code-space/' | wc -l)" >> $GITHUB_ENV
           else
             echo "magic_mirror=1" >> $GITHUB_ENV
             echo "llm=1" >> $GITHUB_ENV
             echo "nfs=1" >> $GITHUB_ENV
             echo "monero=1" >> $GITHUB_ENV
+            echo "qrl=1" >> $GITHUB_ENV
             echo "codespace=1" >> $GITHUB_ENV
           fi
 
@@ -95,4 +97,14 @@ jobs:
           file: ./monero-miner/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/monero-miner:latest
+          platforms: linux/amd64,linux/arm64/v8
+
+      - name: Build and push Docker image for qrl-miner
+        if: env.qrl != '0'
+        uses: docker/build-push-action@v4
+        with:
+          context: ./qrl-miner
+          file: ./qrl-miner/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/qrl-miner:latest
           platforms: linux/amd64,linux/arm64/v8
