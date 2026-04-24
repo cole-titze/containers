@@ -20,7 +20,7 @@ RUN cp build/xmrig /usr/local/bin/
 
 # Set default environment variables
 ENV WALLET_ADDRESS=""
-ENV MINING_POOL="qrl.herominers.com:10371"
+ENV MINING_POOL="qrl.herominers.com:1166"
 
 # Start mining
 CMD ["sh", "-c", "xmrig --donate-level 1 -o $MINING_POOL -u $WALLET_ADDRESS -p x -k --cpu-priority 5 --algo rx/qrl"]
