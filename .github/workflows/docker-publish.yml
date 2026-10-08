@@ -6,6 +6,11 @@ on:
     tags: ["v*.*.*"]
   pull_request:
     branches: [main]
+  # Weekly rebuild of every image, so base images and packages stay current
+  # (the Dockerfiles use :latest bases). The cluster's nightly image updater rolls them out.
+  schedule:
+    - cron: '0 8 * * 0'
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -27,20 +32,15 @@ jobs:
       - name: Determine changed files
         id: changes
         run: |
-          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+          if [ "${{ github.event_name }}" != push ] && [ "${{ github.event_name }}" != pull_request ] || ! git rev-parse HEAD~1 >/dev/null 2>&1; then
+            for v in magic_mirror llm nfs monero qrl codespace; do echo "$v=1" >> $GITHUB_ENV; done
+          else
             echo "magic_mirror=$(git diff --name-only HEAD~1 HEAD | grep '^magic-mirror/' | wc -l)" >> $GITHUB_ENV
             echo "llm=$(git diff --name-only HEAD~1 HEAD | grep '^llm-web-backend/' | wc -l)" >> $GITHUB_ENV
             echo "nfs=$(git diff --name-only HEAD~1 HEAD | grep '^nfs/' | wc -l)" >> $GITHUB_ENV
             echo "monero=$(git diff --name-only HEAD~1 HEAD | grep '^monero-miner/' | wc -l)" >> $GITHUB_ENV
             echo "qrl=$(git diff --name-only HEAD~1 HEAD | grep '^qrl-miner/' | wc -l)" >> $GITHUB_ENV
             echo "codespace=$(git diff --name-only HEAD~1 HEAD | grep '^code-space/' | wc -l)" >> $GITHUB_ENV
-          else
-            echo "magic_mirror=1" >> $GITHUB_ENV
-            echo "llm=1" >> $GITHUB_ENV
-            echo "nfs=1" >> $GITHUB_ENV
-            echo "monero=1" >> $GITHUB_ENV
-            echo "qrl=1" >> $GITHUB_ENV
-            echo "codespace=1" >> $GITHUB_ENV
           fi
 
       - name: Log into registry ${{ env.REGISTRY }}
