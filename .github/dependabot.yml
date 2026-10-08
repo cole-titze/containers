@@ -1,0 +1,11 @@
+# Weekly GitHub Actions updates. The Dockerfiles use :latest or codename tags,
+# which Dependabot can't bump; rebuilding the images picks up new bases.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
