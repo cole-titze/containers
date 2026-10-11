@@ -8,7 +8,7 @@ RUN apk add git
 
 # Build app
 RUN git clone https://github.com/ggerganov/llama.cpp.git
-RUN apk add build-base
+RUN apk add build-base linux-headers
 WORKDIR /llm/llama.cpp
 
 # Create build directory and compile with CMake
