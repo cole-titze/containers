@@ -2,9 +2,11 @@ FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install dependencies
+# Install dependencies. dotnet needs ICU, whose package name carries its version (libicu74 on
+# 24.04, gone on 26.04), so install whichever libicuNN this ubuntu:latest has.
 RUN apt-get update && \
-    apt-get install -y curl jq libicu74 git && \
+    apt-get install -y curl jq git \
+        "$(apt-cache search --names-only '^libicu[0-9]+$' | cut -d' ' -f1 | sort -V | tail -1)" && \
     apt-get clean
 
 # Create non-root user 'coder' with specific UID (e.g., 1001) and bash shell
