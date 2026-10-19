@@ -12,6 +12,12 @@ RUN sed -i "s|8080|8082|g" ./config/config.js
 RUN sed -i 's|\["127\.0\.0\.1", "::ffff:127\.0\.0\.1", "::1"\]|\[\]|g' ./config/config.js
 RUN sed -i 's|localhost|0\.0\.0\.0|g' ./config/config.js
 
+# Run unprivileged. At startup MagicMirror writes config/basepath.js and js/positions.js,
+# so only those two folders belong to the runtime user; npm needs a writable HOME.
+RUN chown 1000:1000 config js
+ENV HOME=/tmp
+USER 1000:1000
+
 EXPOSE 8082
 
 ENTRYPOINT ["npm", "run", "server"]
