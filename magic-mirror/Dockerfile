@@ -7,6 +7,8 @@ RUN git clone https://github.com/MagicMirrorOrg/MagicMirror
 WORKDIR /repos/MagicMirror
 
 RUN npm run install-mm
+# Upstream's lockfile can lag patched releases that Trivy flags; move these within their semver ranges
+RUN npm update --no-audit --no-fund --omit=dev body-parser undici electron
 RUN cp ./config/config.js.sample ./config/config.js
 RUN sed -i "s|8080|8082|g" ./config/config.js
 RUN sed -i 's|\["127\.0\.0\.1", "::ffff:127\.0\.0\.1", "::1"\]|\[\]|g' ./config/config.js
