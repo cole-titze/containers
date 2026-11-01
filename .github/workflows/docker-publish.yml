@@ -18,7 +18,9 @@ env:
 
 jobs:
   build_and_publish:
-    runs-on: ubuntu-latest
+    # Native arm64 runner: the arm64-only images build without QEMU (llm-web-backend took ~2.5 h emulated).
+    # QEMU is still set up below for the miners' amd64 builds.
+    runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
       packages: write
