@@ -18,8 +18,8 @@ env:
 
 jobs:
   build_and_publish:
-    # Native arm64 runner: the arm64-only images build without QEMU (llm-web-backend took ~2.5 h emulated).
-    # QEMU is still set up below for the miners' amd64 builds.
+    # Native arm64 runner: these arm64-only images build without QEMU (llm-web-backend took ~2.5 h emulated).
+    # The miners (amd64 + arm64) are in miners-publish.yml.
     runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
@@ -35,13 +35,11 @@ jobs:
         id: changes
         run: |
           if [ "${{ github.event_name }}" != push ] && [ "${{ github.event_name }}" != pull_request ] || ! git rev-parse HEAD~1 >/dev/null 2>&1; then
-            for v in magic_mirror llm nfs monero qrl codespace; do echo "$v=1" >> $GITHUB_ENV; done
+            for v in magic_mirror llm nfs codespace; do echo "$v=1" >> $GITHUB_ENV; done
           else
             echo "magic_mirror=$(git diff --name-only HEAD~1 HEAD | grep '^magic-mirror/' | wc -l)" >> $GITHUB_ENV
             echo "llm=$(git diff --name-only HEAD~1 HEAD | grep '^llm-web-backend/' | wc -l)" >> $GITHUB_ENV
             echo "nfs=$(git diff --name-only HEAD~1 HEAD | grep '^nfs/' | wc -l)" >> $GITHUB_ENV
-            echo "monero=$(git diff --name-only HEAD~1 HEAD | grep '^monero-miner/' | wc -l)" >> $GITHUB_ENV
-            echo "qrl=$(git diff --name-only HEAD~1 HEAD | grep '^qrl-miner/' | wc -l)" >> $GITHUB_ENV
             echo "codespace=$(git diff --name-only HEAD~1 HEAD | grep '^code-space/' | wc -l)" >> $GITHUB_ENV
           fi
 
@@ -52,9 +50,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up QEMU dependency
-        uses: docker/setup-qemu-action@v4
 
       - name: Build and push Docker image for magic mirror
         if: env.magic_mirror != '0'
@@ -85,28 +80,3 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/code-space:latest
           platforms: linux/arm64/v8
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-        with:
-          driver: docker-container  # Enables multi-platform builds
-
-      - name: Build and push Docker image for monero-miner arm v8
-        if: env.monero != '0'
-        uses: docker/build-push-action@v7
-        with:
-          context: ./monero-miner
-          file: ./monero-miner/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/monero-miner:latest
-          platforms: linux/amd64,linux/arm64/v8
-
-      - name: Build and push Docker image for qrl-miner
-        if: env.qrl != '0'
-        uses: docker/build-push-action@v7
-        with:
-          context: ./qrl-miner
-          file: ./qrl-miner/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/containers/qrl-miner:latest
-          platforms: linux/amd64,linux/arm64/v8

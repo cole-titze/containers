@@ -1,0 +1,87 @@
+name: Miners Publish
+
+# monero-miner and qrl-miner ship for amd64 and arm64. Each arch builds natively on its own
+# runner (no QEMU), pushes a :latest-<arch> tag, then the merge job joins them into :latest.
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+    paths: ["monero-miner/**", "qrl-miner/**", ".github/workflows/miners-publish.yml"]
+  pull_request:
+    branches: [main]
+    paths: ["monero-miner/**", "qrl-miner/**", ".github/workflows/miners-publish.yml"]
+  # Weekly rebuild, same as Docker Publish (the Dockerfiles use :latest bases)
+  schedule:
+    - cron: '0 8 * * 0'
+  workflow_dispatch:
+
+env:
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/containers
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [monero-miner, qrl-miner]
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Log into registry ghcr.io
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.image }} (${{ matrix.arch }})
+        uses: docker/build-push-action@v7
+        with:
+          context: ./${{ matrix.image }}
+          file: ./${{ matrix.image }}/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:latest-${{ matrix.arch }}
+          platforms: linux/${{ matrix.arch }}
+          # Single-arch image so the merge job can list it directly (no attestation index)
+          provenance: false
+
+  merge:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [monero-miner, qrl-miner]
+
+    steps:
+      - name: Log into registry ghcr.io
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Create multi-arch :latest for ${{ matrix.image }}
+        run: |
+          image=${{ env.IMAGE_PREFIX }}/${{ matrix.image }}
+          docker buildx imagetools create -t "$image:latest" "$image:latest-amd64" "$image:latest-arm64"
+          docker buildx imagetools inspect "$image:latest"
