@@ -14,7 +14,7 @@ WORKDIR /llm/llama.cpp
 # Create build directory and compile with CMake
 RUN mkdir build && cd build && \
     cmake .. && \
-    cmake --build . --config Release
+    cmake --build . --config Release -j$(nproc)
 
 # Generate image
 FROM arm64v8/alpine:latest
