@@ -9,7 +9,7 @@ on:
   # Weekly rebuild of every image, so base images and packages stay current
   # (the Dockerfiles use :latest bases). The cluster's nightly image updater rolls them out.
   schedule:
-    - cron: '0 8 * * 0'
+    - cron: '0 8 * * 6'
   workflow_dispatch:
 
 env:

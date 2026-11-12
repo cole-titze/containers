@@ -12,7 +12,7 @@ on:
     paths: ["monero-miner/**", "qrl-miner/**", ".github/workflows/miners-publish.yml"]
   # Weekly rebuild, same as Docker Publish (the Dockerfiles use :latest bases)
   schedule:
-    - cron: '0 8 * * 0'
+    - cron: '0 8 * * 6'
   workflow_dispatch:
 
 env:
